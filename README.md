@@ -1,40 +1,15 @@
-# MM5040
+# Knight Moves
 
-This game is similar to MasterMind.
+![](exempel.JPG)
 
-Instead of answering 
-* White (correct position) or 
-* Black (wrong position), 
+Spelet går ut på att med en springare besöka alla rutor på ett schackbräde.  
+Dock måste man undvika att bli slagen av en dam.  
 
-distance is given.
+Man inleder med att ange var damen ska stå.
 
-Example
+Därefter klickar man på de rutor springaren ska gå till.
 
-* 4712, guessing 1234 gives answer 223
-* 4712, guessing 4712 gives answer 0000
+Ett mynt ligger på den ruta man ska gå till.
 
-Colors 
-
-* Black: Your guess
-* Yellow: The answer (distances)
-* Gray: Number of possible alternatives
-
-M of N
-
-* M: length of guess 1..N, default 4
-* N: number of symbols 2..16, default 10
-
-new: Setup up M and N
-
-Click anywhere to show the meny
-
-Close a menu by clicking the middle button
-
-* a = 10
-* b = 11
-* c = 12
-* d = 13
-* e = 14
-* f = 15
-* g = 16
-
+[Inspiration](https://www.funnyhowtheknightmoves.com/)
+[Github](https://github.com/jairtrejo/knight-moves)

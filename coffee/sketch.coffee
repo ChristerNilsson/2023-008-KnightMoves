@@ -79,7 +79,16 @@ newGame = () ->
 	arrClicks = []
 	taken = 0
 	start = new Date()
-	results.push 'Click on a square to place the queen'
+
+	if results.length == 0
+		results.push 'Move the knight to the square with'
+		results.push 'a coin, without moving to a square the'
+		results.push 'queen can capture and without capturing'
+		results.push 'the queen. Once accomplished the coin'
+		results.push 'moves to the next square. Repeat until'
+		results.push 'all possible squares are done.'
+		results.push ''
+		results.push 'Click on a square to place the queen'
 
 moveKnight = (index) =>
 	if illegal.includes index then return
