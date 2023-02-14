@@ -119,7 +119,7 @@ class Rect
 		textSize W
 		fill "black"
 		text name,@x,@y + 5
-	drawDot : -> if @index != queen then ellipse @x, @y, 2*R
+	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 0 then ellipse @x, @y, 2*R
 	text : (txt) ->
 		textAlign CENTER, CENTER
 		textSize 0.5*W
