@@ -7,7 +7,7 @@ intro = [
  'The ring will move when taken.',
  'Repeat for all squares.',
  'Qa8 is an easy starter.',
- 'Qd5 is a good challenge.',
+ 'Qd5 is a good challenge, 158 moves.',
 ]
 
 sum = (arr)	=> arr.reduce(((a, b) => a + b), 0)
