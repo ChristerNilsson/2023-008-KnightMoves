@@ -1,6 +1,15 @@
 range = _.range
 logg = console.log
 
+intro = [
+ 'Click on a square to place the queen.',
+ 'Avoid the dots and the queen.',
+ 'The ring will move when taken.',
+ 'Repeat for all squares.',
+ 'Qa8 is an easy starter.',
+ 'Qd5 is a good challenge.',
+]
+
 sum = (arr)	=> arr.reduce(((a, b) => a + b), 0)
 
 NOQUEEN = [10,13,17,18,19,20,21,22,26,29,34,37,41,42,43,44,45,46,50,53]
@@ -23,14 +32,14 @@ knight = 0
 clicks = 0
 arrClicks = []	# number of clicks for each target
 taken = 0
-results = []
+results = ['Move the knight to the ring']
 
 start = 0
 
 window.onresize = -> reSize()
 
 reSize = ->
-	H = min(innerHeight//18,innerWidth//9)
+	H = min(innerHeight//13,innerWidth//9)
 	W = H
 	H = W
 	R = W//10
@@ -56,7 +65,7 @@ makeIllegals = =>
 		if ci == cq or ri == rq or dc == dr then illegal.push i
 
 placeQueen = (index) =>
-	logg qPosition index
+	logg 'Q' + Position index
 	if NOQUEEN.includes index
 		logg 'No queen here'
 		return
@@ -68,7 +77,6 @@ placeQueen = (index) =>
 	arrClicks.push 0
 	taken++
 	state++
-	results[results.length-1] = 'Move the knight to the ring'
 
 newGame = () ->
 	queen = 0
@@ -80,16 +88,6 @@ newGame = () ->
 	arrClicks = []
 	taken = 0
 	start = new Date()
-
-	if results.length == 0
-		results.push 'Move the knight to the ring.'
-		results.push 'Avoid the dots and the queen.'
-		results.push 'The ring will move when taken.'
-		results.push 'Repeat for all squares.'
-		results.push 'Try Qa8 as an easy starter.'
-		results.push 'Qd5 is a good challenge.'
-		results.push ''
-		results.push 'Click on a square to place the queen.'
 
 moveKnight = (index) =>
 	if illegal.includes index then return
@@ -105,8 +103,8 @@ moveKnight = (index) =>
 			arrClicks.push clicks
 			clicks = 0
 	if taken == targets.length
-		results.pop()
-		results.push "#{qPosition()}: #{sum(arrClicks)} moves took #{(new Date()-start)/1000} seconds"
+		# results.pop()
+		results.push "Q#{Position queen}: #{sum(arrClicks)} moves took #{(new Date()-start)/1000} seconds"
 		state = 2
 
 class Rect
@@ -140,13 +138,14 @@ setup = =>
 	textAlign CENTER, CENTER
 	createCanvas innerWidth, innerHeight
 
-qPosition = (index) -> "Q#{"abcdefgh"[c index]}#{"87654321"[r index]}"
+Position = (index) -> "#{"abcdefgh"[c index]}#{"87654321"[r index]}"
 
 info = ->
 	fill 'black'
 	textAlign CENTER, CENTER
 	textSize 0.5*W
-	for result,i in results
+	temp = if state==0 then intro else results
+	for result,i in temp
 		text result,innerWidth//2, 9*H + i*H/2
 
 drawBoard = =>
