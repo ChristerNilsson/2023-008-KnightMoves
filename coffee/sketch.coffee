@@ -111,7 +111,7 @@ moveKnight = (index) =>
 
 class Rect
 	constructor : (@index, @x,@y, @w,@h, @col) ->
-	draw :  ->
+	draw : ->
 		fill @col
 		rect @x, @y, @w, @h
 	inside : (x, y) -> abs(x-@x) <= W/2 and abs(y-@y) <= H/2
@@ -119,7 +119,7 @@ class Rect
 	drawPiece : (name) ->
 		textSize W
 		fill "black"
-		text name,@x,@y + 5
+		text name,@x,@y
 	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 0 then ellipse @x, @y, 2*R
 	text : (txt) ->
 		textAlign CENTER, CENTER
@@ -140,7 +140,7 @@ setup = =>
 	textAlign CENTER, CENTER
 	createCanvas innerWidth, innerHeight
 
-qPosition = (index)-> "Q#{"abcdefgh"[c index]}#{"87654321"[r index]}"
+qPosition = (index) -> "Q#{"abcdefgh"[c index]}#{"87654321"[r index]}"
 
 info = ->
 	fill 'black'
@@ -149,7 +149,7 @@ info = ->
 	for result,i in results
 		text result,innerWidth//2, 9*H + i*H/2
 
-drawBoard = () =>
+drawBoard = =>
 	for rect in rects
 		rect.draw()
 
