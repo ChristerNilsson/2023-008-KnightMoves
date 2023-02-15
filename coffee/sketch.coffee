@@ -8,7 +8,7 @@ N = 8
 W = 0
 H = 0
 R = W//10
-c = (n) => n %% N
+c = (n) => 7 - n %% N
 r = (n) => n // N
 rects = []
 
@@ -40,8 +40,8 @@ reSize = ->
 	for index in range N*N
 		ri = r index
 		ci = c index
-		col = if (ri + ci) % 2 then 'yellow' else 'brown'
-		x = W/2 + W * c index 
+		col = if (ri + ci) % 2 then 'brown' else 'yellow'
+		x = W/2 + W * c index
 		y = H + H * r index
 		rects.push new Rect index, margin+x, y, W,H, col
 
@@ -56,18 +56,19 @@ makeIllegals = =>
 		if ci == cq or ri == rq or dc == dr then illegal.push i
 
 placeQueen = (index) =>
+	logg qPosition index
 	if NOQUEEN.includes index
 		logg 'No queen here'
 		return
 
 	queen = index
 	makeIllegals()
-	targets= range(N*N).filter (i) => not illegal.includes i
+	targets = range(N*N).filter (i) => not illegal.includes i
 	knight = targets[0]
 	arrClicks.push 0
 	taken++
 	state++
-	results[results.length-1] = 'Move the knight to the coin'
+	results[results.length-1] = 'Move the knight to the ring'
 
 newGame = () ->
 	queen = 0
@@ -81,12 +82,10 @@ newGame = () ->
 	start = new Date()
 
 	if results.length == 0
-		results.push 'Move the knight to the square with'
-		results.push 'a coin, without moving to a square the'
-		results.push 'queen can capture and without capturing'
-		results.push 'the queen. Once accomplished the coin'
-		results.push 'moves to the next square. Repeat until'
-		results.push 'all possible squares are done.'
+		results.push 'Move the knight to the ring.'
+		results.push 'Avoid the dots and the queen.'
+		results.push 'The ring will move when taken.'
+		results.push 'Repeat for all squares'
 		results.push ''
 		results.push 'Click on a square to place the queen'
 
@@ -105,7 +104,7 @@ moveKnight = (index) =>
 			clicks = 0
 	if taken == targets.length
 		results.pop()
-		results.push "#{qPosition()}: #{sum(arrClicks)} clicks took #{(new Date()-start)/1000} seconds"
+		results.push "#{qPosition()}: #{sum(arrClicks)} moves took #{(new Date()-start)/1000} seconds"
 		state = 2
 
 class Rect
@@ -139,7 +138,7 @@ setup = =>
 	textAlign CENTER, CENTER
 	createCanvas innerWidth, innerHeight
 
-qPosition = ()-> "Q#{"abcdefgh"[c queen]}#{"87654321"[r queen]}"
+qPosition = (index)-> "Q#{"abcdefgh"[c index]}#{"87654321"[r index]}"
 
 info = ->
 	fill 'black'
