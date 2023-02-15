@@ -85,9 +85,10 @@ newGame = () ->
 		results.push 'Move the knight to the ring.'
 		results.push 'Avoid the dots and the queen.'
 		results.push 'The ring will move when taken.'
-		results.push 'Repeat for all squares'
+		results.push 'Repeat for all squares.'
+		results.push 'Try Qa8 as an easy starter.'
 		results.push ''
-		results.push 'Click on a square to place the queen'
+		results.push 'Click on a square to place the queen.'
 
 moveKnight = (index) =>
 	if illegal.includes index then return
