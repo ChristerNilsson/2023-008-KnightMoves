@@ -87,6 +87,7 @@ newGame = () ->
 		results.push 'The ring will move when taken.'
 		results.push 'Repeat for all squares.'
 		results.push 'Try Qa8 as an easy starter.'
+		results.push 'Qd5 is a good challenge.'
 		results.push ''
 		results.push 'Click on a square to place the queen.'
 
