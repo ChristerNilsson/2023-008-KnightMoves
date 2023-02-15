@@ -19,6 +19,19 @@ Dam på RÖD ruta markerar EJ vilka rutor damen hotar (svårare)
 
 Qd5 kräver 158 drag.
 
+Följande damstarter är spärrade eftersom alla rutor ej kan nås:
+```
+. . . X X . . .
+. . X . . X . .
+. X X X X X X .
+X . X . . X . X
+X . X . . X . X
+. X X X X X X .
+. . X . . X . .
+. . . X X . . .
+```
+
+
 [Inspiration](https://www.funnyhowtheknightmoves.com/)
 
 [Shortest Path](https://gist.github.com/hughdbrown/5c14ec41c30532807afaeba9c16789a8?permalink_comment_id=4451216#gistcomment-4451216)

@@ -1,18 +1,18 @@
 range = _.range
 logg = console.log
 
-intro = [
- 'Click on a square to place the queen.',
- 'Avoid the dots and the queen.',
- 'The ring will move when taken.',
- 'Repeat for all squares.',
- 'Qa8 is an easy starter.',
- 'Qd5 is a good challenge, 158 moves.',
-]
+intro = """
+Click on a square to place the queen.
+Avoid the dots and the queen.
+The ring will move when taken.
+Repeat for all squares.
+Qa8 is an easy starter, 118 moves.
+Qd5 is a good challenge, 158 moves.
+""".split('\n')
 
 sum = (arr)	=> arr.reduce(((a, b) => a + b), 0)
 
-NOQUEEN = [10,13,17,18,19,20,21,22,26,29,34,37,41,42,43,44,45,46,50,53]
+NOQUEEN = [3,4,10,13,17,18,19,20,21,22,24,26,29,31,32,34,37,39,41,42,43,44,45,46,50,53,59,60]
 N = 8
 W = 0
 H = 0
@@ -115,7 +115,7 @@ class Rect
 	inside : (x, y) -> abs(x-@x) <= W/2 and abs(y-@y) <= H/2
 	click : -> if state==0 then placeQueen @index else moveKnight @index
 	drawPiece : (name) ->
-		textSize W
+		textSize 1.1 * W
 		fill "black"
 		text name,@x,@y
 	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 0 then ellipse @x, @y, 2*R
