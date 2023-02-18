@@ -1,8 +1,11 @@
 range = _.range
 logg = console.log
 
+# todo: visa minimalt antal drag i ringen
+# todo: justera höjden av texten beroende på OS	
+
 intro = """
-Click on a square to place the queen.
+Select your queen.
 Avoid the dots and the queen.
 The ring will move when taken.
 Repeat for all squares.
@@ -103,7 +106,6 @@ moveKnight = (index) =>
 			arrClicks.push clicks
 			clicks = 0
 	if taken == targets.length
-		# results.pop()
 		results.push "Q#{Position queen}: #{sum(arrClicks)} moves took #{(new Date()-start)/1000} seconds"
 		state = 2
 
@@ -118,7 +120,7 @@ class Rect
 		textSize 1.1 * W
 		fill "black"
 		text name,@x,@y
-	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 0 then ellipse @x, @y, 2*R
+	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 1 then ellipse @x, @y, 2*R
 	text : (txt) ->
 		textAlign CENTER, CENTER
 		textSize 0.5*W
@@ -169,6 +171,11 @@ draw = =>
 	for i in range taken
 		if targets[i] != knight
 			rects[targets[i]].text arrClicks[i]
+
+	if state == 0
+		for i in range(N*N)
+			if not NOQUEEN.includes i
+				rects[i].drawPiece(Queen)
 
 	if state == 1
 		rects[targets[taken]].coin()
