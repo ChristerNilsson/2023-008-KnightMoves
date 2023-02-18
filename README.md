@@ -13,9 +13,9 @@ Därefter klickar man på de rutor springaren ska gå till.
 
 Ett mynt markerar vilken ruta man ska gå till.
 
-Dam på GUL ruta markerar vilka rutor damen hotar (lättare)
+Dam på RÖD ruta markerar vilka rutor damen hotar (lättare)
 
-Dam på RÖD ruta markerar EJ vilka rutor damen hotar (svårare)
+Dam på GUL ruta markerar EJ vilka rutor damen hotar (svårare)
 
 Qd5 kräver 158 drag.
 
