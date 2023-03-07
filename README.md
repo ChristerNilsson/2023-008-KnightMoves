@@ -16,7 +16,7 @@ Qd5 kräver 158 drag.
 ![](exempel1.JPG)
 
 Därefter klickar man på de rutor springaren ska gå till.  
-En ring markerar vilken ruta man ska gå till.  
+En gul ring markerar vilken ruta man ska gå till.  
 
 [Inspiration](https://www.funnyhowtheknightmoves.com/)
 

@@ -4,7 +4,7 @@ logg = console.log
 intro = """
 Select your queen.
 Avoid the dots and the queen.
-The ring will move when taken.
+The yellow ring will move when taken.
 Repeat for all squares.
 """.split('\n')
 
@@ -47,7 +47,7 @@ knightHops = []
 clicks = 0
 counts = []	# number of clicks for each target
 taken = 0
-results = ['Move the knight to the ring']
+results = ['Move the knight to the yellow ring']
 
 start = 0
 
