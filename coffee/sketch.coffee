@@ -1,12 +1,7 @@
 range = _.range
 logg = console.log
 
-intro = """
-Select your queen.
-Avoid the dots and the queen.
-The yellow ring will move when taken.
-Repeat for all squares.
-""".split('\n')
+intro = ["Select a queen"]
 
 sum = (arr)	=> arr.reduce(((a, b) => a + b), 0)
 
