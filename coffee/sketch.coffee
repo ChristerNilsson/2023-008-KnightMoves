@@ -1,16 +1,11 @@
 range = _.range
 logg = console.log
 
-# todo: visa minimalt antal drag i ringen
-# todo: justera höjden av texten beroende på OS	
-
 intro = """
 Select your queen.
 Avoid the dots and the queen.
 The ring will move when taken.
 Repeat for all squares.
-Qa8 is an easy starter, 118 moves.
-Qd5 is a good challenge, 158 moves.
 """.split('\n')
 
 sum = (arr)	=> arr.reduce(((a, b) => a + b), 0)
@@ -20,20 +15,37 @@ N = 8
 W = 0
 H = 0
 R = W//10
-c = (n) => 7 - n %% N
+c = (n) => n %% N
 r = (n) => n // N
 rects = []
 
 Queen = '♛'
 Knight = '♘'
 queen = 0
-illegal = [] # indexes of squares taken by queen
+queenHops = [] # indexes of squares taken by queen
 targets = [] # indexes of squares that knight must visit
 state = 0
+margin = 0
+
+makeKnightHops = (knight) =>
+	if knight==-1 then return []
+	res = []
+	col = c knight
+	row = r knight
+	for dc in [-2,-1,1,2]
+		for dr in [-2,-1,1,2]
+			if abs(dc) == abs(dr) then continue
+			c2 = col + dc
+			r2 = row + dr
+			index = c2+8*r2
+			if c2 in range(8) and r2 in range(8) and index in targets then res.push index
+	res.sort (a,b) -> a-b
+	res
 
 knight = 0
+knightHops = []
 clicks = 0
-arrClicks = []	# number of clicks for each target
+counts = []	# number of clicks for each target
 taken = 0
 results = ['Move the knight to the ring']
 
@@ -48,16 +60,16 @@ reSize = ->
 	R = W//10
 	resizeCanvas innerWidth, innerHeight
 	rects = []
-	margin = (innerWidth-8*W)//2
+	margin = (innerWidth-10*W)/2 + W//3
 	for index in range N*N
 		ri = r index
 		ci = c index
-		col = if (ri + ci) % 2 then 'brown' else 'yellow'
-		x = W/2 + W * c index
-		y = H + H * r index
+		col = if (ri + ci) % 2 then 'darkgray' else 'lightgray'
+		x = 3*W/2 + W * c index
+		y = 3*H/2 + H * (7-r index)
 		rects.push new Rect index, margin+x, y, W,H, col
 
-makeIllegals = =>
+makeQueenHops = =>
 	for i in range N*N
 		ci = c i
 		ri = r i
@@ -65,7 +77,8 @@ makeIllegals = =>
 		rq = r queen
 		dc = abs ci - cq
 		dr = abs ri - rq
-		if ci == cq or ri == rq or dc == dr then illegal.push i
+		if ci == cq or ri == rq or dc == dr then queenHops.push i
+	logg {queenHops}
 
 placeQueen = (index) =>
 	logg 'Q' + Position index
@@ -74,39 +87,42 @@ placeQueen = (index) =>
 		return
 
 	queen = index
-	makeIllegals()
-	targets = range(N*N).filter (i) => not illegal.includes i
+	makeQueenHops()
+	targets = range(N*N).filter (i) => not queenHops.includes i
+	targets.sort (a,b) -> b-a
 	knight = targets[0]
-	arrClicks.push 0
+	knightHops = makeKnightHops knight
+	counts = []
 	taken++
 	state++
 
 newGame = () ->
 	queen = 0
-	illegal = []
+	queenHops = []
 	targets = []
 	state = 0
 	knight = 0
 	clicks = 0
-	arrClicks = []
+	counts = []
 	taken = 0
 	start = new Date()
 
 moveKnight = (index) =>
-	if illegal.includes index then return
+	if queenHops.includes index then return
 	col = c index
 	row = r index
 	dx = abs col - c knight
 	dy = abs row - r knight
-	if dx*dx + dy*dy == 5
+	if index in knightHops
 		knight = index
+		knightHops = makeKnightHops knight
 		clicks++
 		if targets[taken] == knight
 			taken++
-			arrClicks.push clicks
+			counts.push clicks
 			clicks = 0
 	if taken == targets.length
-		results.push "Q#{Position queen}: #{sum(arrClicks)} moves took #{(new Date()-start)/1000} seconds"
+		results.push "Q#{Position queen}: #{sum(counts)} moves took #{(new Date()-start)/1000} seconds"
 		state = 2
 
 class Rect
@@ -115,21 +131,25 @@ class Rect
 		fill @col
 		rect @x, @y, @w, @h
 	inside : (x, y) -> abs(x-@x) <= W/2 and abs(y-@y) <= H/2
-	click : -> if state==0 then placeQueen @index else moveKnight @index
+	click : -> 
+		logg @index
+		if state==0 then placeQueen @index else moveKnight @index
 	drawPiece : (name) ->
 		textSize 1.1 * W
 		fill "black"
-		text name,@x,@y
-	drawDot : -> if @index != queen and (r(queen)+c(queen)) % 2 == 1 then ellipse @x, @y, 2*R
+		text name,@x,@y+0.1*H
+	drawQueenHop  : -> if r(queen)%2==0 and @index!=queen and @index in queenHops then ellipse @x, @y, 3*R
+	drawKnightHop : -> if c(queen)%2==0 and @index in knightHops then ellipse @x, @y, 3*R
 	text : (txt) ->
 		textAlign CENTER, CENTER
 		textSize 0.5*W
 		fill 'black'
 		text txt, @x, @y
-	coin : =>
+	ring : =>
 		noFill()
 		push()
 		strokeWeight 3
+		stroke 'yellow'
 		ellipse @x, @y, 5*R
 		pop()
 
@@ -148,15 +168,32 @@ info = ->
 	textSize 0.5*W
 	temp = if state==0 then intro else results
 	for result,i in temp
-		text result,innerWidth//2, 9*H + i*H/2
+		text result,innerWidth//2, 10.5*H + i*H/2
 
 drawBoard = =>
 	for rect in rects
 		rect.draw()
 
+showLittera = (flag) =>
+	col1 = "black"
+	col2 = "white"
+	textSize 0.5*W
+	for i in range N
+		x = W*(1.5+i) + margin
+		y = W*(0.5+N-i)
+		col3 = if flag then [col2,col1][i%2] else col1
+		noFill()
+		if flag and i%2==0 then circle x, W*(N+1.5), 0.6*W
+		fill col1
+		if flag and i%2==0 then circle margin+W/2, y,0.6*W
+		text "abcdefgh"[i], x, W*(N+1.5)
+		if i%2==0 then fill col3 else fill col1
+		text "12345678"[i], margin+W/2, y+2
+
 draw = =>
 	background 128
 	drawBoard()
+	showLittera state==0
 	info()
 
 	textAlign CENTER, CENTER
@@ -164,13 +201,18 @@ draw = =>
 		rects[queen].drawPiece Queen
 		rects[knight].drawPiece Knight
 
-	for i in illegal
-		rects[i].drawDot()
-
 	textSize 0.55*W
 	for i in range taken
 		if targets[i] != knight
-			rects[targets[i]].text arrClicks[i]
+			rects[targets[i]].text counts[i]
+
+	fill 'black'
+	for i in queenHops
+		rects[i].drawQueenHop()
+
+	fill 'white'
+	for i in knightHops
+		rects[i].drawKnightHop()
 
 	if state == 0
 		for i in range(N*N)
@@ -178,7 +220,7 @@ draw = =>
 				rects[i].drawPiece(Queen)
 
 	if state == 1
-		rects[targets[taken]].coin()
+		rects[targets[taken]].ring()
 
 mousePressed = ->
 	if state==2

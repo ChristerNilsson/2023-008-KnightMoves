@@ -2,22 +2,21 @@
 
 [Try it!](https://christernilsson.github.io/2023-008-KnightMoves/)
 
-![](exempel.JPG)
+![](exempel0.JPG)
 
 Spelet går ut på att med en springare besöka alla rutor på ett schackbräde.  
 Dock måste man undvika att bli slagen av en dam.  
 
-Man inleder med att ange var damen ska stå.
-
-Därefter klickar man på de rutor springaren ska gå till.
-
-Ett mynt markerar vilken ruta man ska gå till.
-
-Dam på RÖD ruta markerar vilka rutor damen hotar (lättare)
-
-Dam på GUL ruta markerar EJ vilka rutor damen hotar (svårare)
-
+Man inleder med att ange var damen ska stå.  
+Dam på raderna 1,3,5 och 7 markerar vilka rutor damen hotar  
+Dam på kolumnerna a,c,e och g markerar rutor dit springaren kan flytta.  
+Qa1 kräver 118 drag.
 Qd5 kräver 158 drag.
+
+![](exempel1.JPG)
+
+Därefter klickar man på de rutor springaren ska gå till.  
+En ring markerar vilken ruta man ska gå till.  
 
 [Inspiration](https://www.funnyhowtheknightmoves.com/)
 
