@@ -1,5 +1,9 @@
 range = _.range
 logg = console.log
+logg navigator.userAgent
+os = if navigator.userAgent.includes 'Windows' then 'Windows' else 'Mac'
+
+audio = new Audio 'shortclick.mp3'
 
 intro = ["Select a queen"]
 
@@ -20,7 +24,8 @@ queen = 0
 queenHops = [] # indexes of squares taken by queen
 targets = [] # indexes of squares that knight must visit
 state = 0
-margin = 0
+marginx = 0
+marginy = 0
 
 makeKnightHops = (knight) =>
 	if knight==-1 then return []
@@ -49,20 +54,21 @@ start = 0
 window.onresize = -> reSize()
 
 reSize = ->
-	H = min(innerHeight//13,innerWidth//9)
+	H = min(innerHeight//11,innerWidth//9)
 	W = H
-	H = W
 	R = W//10
 	resizeCanvas innerWidth, innerHeight
 	rects = []
-	margin = (innerWidth-10*W)/2 + W//3
+	marginx = (innerWidth-10*W)/2 + W//3
+	marginy = H
 	for index in range N*N
 		ri = r index
 		ci = c index
-		col = if (ri + ci) % 2 then 'darkgray' else 'lightgray'
+		col = if (ri + ci) % 2 then 'lightgray' else 'darkgray'
 		x = 3*W/2 + W * c index
-		y = 3*H/2 + H * (7-r index)
-		rects.push new Rect index, margin+x, y, W,H, col
+		y = H * (7-r index)
+		rects.push new Rect index, marginx+x, marginy+y, W,H, col
+	rects.push new Rect 64, marginx+W*0.6, marginy+8*H, 0.8*W,0.8*H, col
 
 makeQueenHops = =>
 	for i in range N*N
@@ -94,6 +100,7 @@ placeQueen = (index) =>
 newGame = () ->
 	queen = 0
 	queenHops = []
+	knightHops = []
 	targets = []
 	state = 0
 	knight = 0
@@ -109,6 +116,7 @@ moveKnight = (index) =>
 	dx = abs col - c knight
 	dy = abs row - r knight
 	if index in knightHops
+		audio.play()
 		knight = index
 		knightHops = makeKnightHops knight
 		clicks++
@@ -117,7 +125,8 @@ moveKnight = (index) =>
 			counts.push clicks
 			clicks = 0
 	if taken == targets.length
-		results.push "Q#{Position queen}: #{sum(counts)} moves took #{(new Date()-start)/1000} seconds"
+		results = ["Q#{Position queen}: #{sum(counts)} moves took #{(new Date()-start)/1000} seconds","Click Ok"]
+		knightHops = []
 		state = 2
 
 class Rect
@@ -125,14 +134,21 @@ class Rect
 	draw : ->
 		fill @col
 		rect @x, @y, @w, @h
+		if @index == 64
+			fill 'black'
+			textSize 0.5*W
+			text "Ok", @x, @y
 	inside : (x, y) -> abs(x-@x) <= W/2 and abs(y-@y) <= H/2
 	click : -> 
-		logg @index
-		if state==0 then placeQueen @index else moveKnight @index
+		# audio.pause()
+		if state==0 then placeQueen @index
+		else if state==1 then moveKnight @index
+		else if state==2 then newGame()
 	drawPiece : (name) ->
 		textSize 1.1 * W
 		fill "black"
-		text name,@x,@y+0.1*H
+		if os=='Windows' then text name,@x,@y+0.1*H
+		if os!='Windows' then text name,@x,@y+0.0*H
 	drawQueenHop  : -> if r(queen)%2==0 and @index!=queen and @index in queenHops then ellipse @x, @y, 3*R
 	drawKnightHop : -> if c(queen)%2==0 and @index in knightHops then ellipse @x, @y, 3*R
 	text : (txt) ->
@@ -155,7 +171,7 @@ setup = =>
 	textAlign CENTER, CENTER
 	createCanvas innerWidth, innerHeight
 
-Position = (index) -> "#{"abcdefgh"[c index]}#{"87654321"[r index]}"
+Position = (index) -> "abcdefgh"[c index] + "12345678"[r index]
 
 info = ->
 	fill 'black'
@@ -163,27 +179,27 @@ info = ->
 	textSize 0.5*W
 	temp = if state==0 then intro else results
 	for result,i in temp
-		text result,innerWidth//2, 10.5*H + i*H/2
+		text result,innerWidth//2, 10*H + i*H/2
 
 drawBoard = =>
-	for rect in rects
-		rect.draw()
+	n = [64,64,65][state]
+	rect.draw() for rect in rects.slice 0,n
 
 showLittera = (flag) =>
 	col1 = "black"
 	col2 = "white"
 	textSize 0.5*W
 	for i in range N
-		x = W*(1.5+i) + margin
-		y = W*(0.5+N-i)
+		x = W*(1.5+i) + marginx
+		y = W*(N-1-i) + marginy
 		col3 = if flag then [col2,col1][i%2] else col1
 		noFill()
-		if flag and i%2==0 then circle x, W*(N+1.5), 0.6*W
+		if flag and i%2==0 then circle x, W*(N+1), 0.6*W
 		fill col1
-		if flag and i%2==0 then circle margin+W/2, y,0.6*W
-		text "abcdefgh"[i], x, W*(N+1.5)
+		if flag and i%2==0 then circle marginx+W/2, y,0.6*W
+		text "abcdefgh"[i], x, W*(N+1)
 		if i%2==0 then fill col3 else fill col1
-		text "12345678"[i], margin+W/2, y+2
+		text "12345678"[i], marginx+W/2, y
 
 draw = =>
 	background 128
@@ -192,7 +208,7 @@ draw = =>
 	info()
 
 	textAlign CENTER, CENTER
-	if state > 0
+	if state == 1
 		rects[queen].drawPiece Queen
 		rects[knight].drawPiece Knight
 
@@ -217,9 +233,16 @@ draw = =>
 	if state == 1
 		rects[targets[taken]].ring()
 
+	if state == 2
+		rects[queen].drawPiece Queen
+		rects[knight].drawPiece Knight
+
 mousePressed = ->
-	if state==2
-		newGame()
-		return
-	for rect in rects
+	if state == 2
+		rect = rects[64]
 		if rect.inside mouseX, mouseY then rect.click()
+		# newGame()
+		# return
+	else
+		for rect in rects
+			if rect.inside mouseX, mouseY then rect.click()
